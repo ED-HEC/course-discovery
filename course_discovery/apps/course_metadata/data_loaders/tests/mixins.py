@@ -21,6 +21,7 @@ class DataLoaderTestMixin(OAuth2Mixin):
 
     def assert_api_called(self, expected_num_calls, check_auth=True):
         """ Asserts the API was called with the correct number of calls, and the appropriate Authorization header. """
+
         self.assertEqual(len(responses.calls), expected_num_calls)
         if check_auth:
             # 'JWT abcd' is the default value that comes from the mock_access_token function called in setUp
