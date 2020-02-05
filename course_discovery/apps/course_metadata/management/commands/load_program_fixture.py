@@ -18,7 +18,7 @@ from course_discovery.apps.course_metadata.models import (
 from course_discovery.apps.course_metadata.signals import (
     check_curriculum_for_cycles, check_curriculum_program_membership_for_cycles,
     ensure_external_key_uniqueness__course_run, ensure_external_key_uniqueness__curriculum,
-    ensure_external_key_uniqueness__curriculum_course_membership
+    ensure_external_key_uniqueness__curriculum_course_membership, update_or_create_salesforce_course_run
 )
 
 logger = logging.getLogger(__name__)
@@ -36,6 +36,7 @@ def disconnect_program_signals():
     - ensure_external_key_uniqueness__curriculum_course_membership
     """
     pre_save = db.models.signals.pre_save
+    post_save = db.models.signals.post_save
 
     signals_list = [
         {
@@ -62,6 +63,11 @@ def disconnect_program_signals():
             'action': pre_save,
             'signal': ensure_external_key_uniqueness__curriculum_course_membership,
             'sender': CurriculumCourseMembership,
+        },
+        {
+            'action': post_save,
+            'signal': update_or_create_salesforce_course_run,
+            'sender': CourseRun,
         },
     ]
 
